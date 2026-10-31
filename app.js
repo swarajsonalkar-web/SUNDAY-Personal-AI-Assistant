@@ -1,0 +1,7 @@
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function api(u,o={}){let r=await fetch(u,{headers:{'Content-Type':'application/json'},...o});let x=await r.json();if(!r.ok)throw Error(x.detail||'Request failed');return x}
+async function load(){let t=await api('/api/tasks'),n=await api('/api/notes');$('#tasks').innerHTML=t.map(x=>`<div class="item row"><input style="width:auto" type="checkbox" ${x.done?'checked':''} onchange="toggle(${x.id})"><span>${esc(x.title)}</span><button class="danger" onclick="del(${x.id})">×</button></div>`).join('')||'<p class="muted">No tasks yet.</p>';$('#notes').innerHTML=n.map(x=>`<div class="item">${esc(x.body)}</div>`).join('')}
+window.toggle=async i=>{await api('/api/tasks/'+i,{method:'PATCH'});load()};window.del=async i=>{await api('/api/tasks/'+i,{method:'DELETE'});load()};
+$('#tf').onsubmit=async e=>{e.preventDefault();await api('/api/tasks',{method:'POST',body:JSON.stringify({title:$('#task').value})});e.target.reset();load()};
+$('#nf').onsubmit=async e=>{e.preventDefault();await api('/api/notes',{method:'POST',body:JSON.stringify({body:$('#note').value})});e.target.reset();load()};
+$('#cf').onsubmit=async e=>{e.preventDefault();let x=await api('/api/chat',{method:'POST',body:JSON.stringify({message:$('#msg').value})});$('#reply').textContent=x.reply};load();
