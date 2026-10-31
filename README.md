@@ -108,3 +108,5 @@ Open: http://127.0.0.1:8001
 ---
 
 *Building a personal digital assistant, one feature at a time.*
+
+Make a separate static in oroject directory and then paste the html,css and javascript file
